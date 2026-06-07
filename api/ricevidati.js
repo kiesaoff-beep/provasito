@@ -12,7 +12,7 @@ export default function handler(req, response) {
     if (!latitudine || !longitudine) {
         return response.status(400).json({ 
             status: 'errore', 
-            messaggio: 'Dati di geolocalizzazione non validi o mancanti.' 
+            messaggio: 'riprova' 
         });
     }
 
@@ -23,6 +23,6 @@ export default function handler(req, response) {
     // Risposta inviata al client
     return response.status(200).json({ 
         status: 'successo', 
-        messaggio: 'Coordinate ricevute e processate in modo sicuro!' 
+        messaggio: 'riprova' 
     });
 }
