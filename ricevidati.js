@@ -1,19 +1,28 @@
 export default function handler(req, response) {
-    // Accettiamo solo richieste di tipo POST
-    if (req.method === 'POST') {
-        // Estraiamo i dati inviati dal frontend
-        const { nome, cognome } = req.body;
-
-        // Qui in futuro potrai salvare i dati in un database (es. Supabase, MongoDB)
-        console.log(`Dati ricevuti su Vercel: ${nome} ${cognome}`);
-
-        // Rispondiamo al frontend con un messaggio di successo
-        return response.status(200).json({ 
-            status: 'successo', 
-            messaggio: `Ciao ${nome} ${cognome}, dati ricevuti su Vercel!` 
-        });
-    } else {
-        // Se qualcuno prova a fare un accesso diverso (es. GET), diamo errore
+    // Gestione della Privacy e Sicurezza dei metodi HTTP
+    if (req.method !== 'POST') {
         response.setHeader('Allow', ['POST']);
         return response.status(405).end(`Metodo ${req.method} non consentito`);
     }
+
+    // Estraiamo in modo sicuro le coordinate inviate dal body della richiesta JSON
+    const { latitudine, longitudine } = req.body;
+
+    // Validazione base dei dati ricevuti
+    if (!latitudine || !longitudine) {
+        return response.status(400).json({ 
+            status: 'errore', 
+            messaggio: 'Dati di geolocalizzazione non validi o mancanti.' 
+        });
+    }
+
+    // Nota lato privacy: Questo log sarà visibile SOLO a te nella dashboard di Vercel.
+    // Gli utenti esterni o malintenzionati non possono vedere questi log.
+    console.log(`[LOG SICURO] Nuova coordinata ricevuta: Lat ${latitudine}, Lon ${longitudine}`);
+
+    // Risposta inviata al client
+    return response.status(200).json({ 
+        status: 'successo', 
+        messaggio: 'Coordinate ricevute e processate in modo sicuro!' 
+    });
+}
