@@ -50,7 +50,6 @@
         function trovaPosizione() {
             const risultato = document.getElementById("risultato");
 
-            // 1. Verifica se il browser supporta l'API
             if (!navigator.geolocation) {
                 risultato.innerHTML = "La geolocalizzazione non è supportata dal tuo browser.";
                 return;
@@ -58,16 +57,34 @@
 
             risultato.innerHTML = "Richiesta in corso... Controlla il pop-up del browser.";
 
-            // 2. Chiamata all'API (Questo attiverà il pop-up di consenso)
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    // Caso di successo: l'utente ha cliccato "Consenti"
+                    // 1. Estraiamo i dati di geolocalizzazione
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    risultato.innerHTML = `Posizione trovata!<br>Latitudine: ${lat}<br>Longitudine: ${lon}`;
+                    
+                    risultato.innerHTML = `Posizione trovata!<br>Latitudine: ${lat}<br>Longitudine: ${lon}<br><em>Invio al server in corso...</em>`;
+
+                    // 2. INVIAMO I DATI A VERCEL IN PRIVACY (Via POST cifrato)
+                    fetch('/api/salva-posizione', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        // Spediamo solo latitudine e longitudine
+                        body: JSON.stringify({ latitudine: lat, longitudine: lon })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        // Modifichiamo il testo per confermare l'avvenuto invio al backend
+                        risultato.innerHTML += `<br><br><span style="color: green;">[Server Vercel]: ${data.messaggio}</span>`;
+                    })
+                    .catch(err => {
+                        console.error("Errore di rete:", err);
+                        risultato.innerHTML += `<br><br><span style="color: red;">Errore nell'invio dei dati al server.</span>`;
+                    });
                 },
                 function(error) {
-                    // Caso di errore: l'utente ha cliccato "Blocca" o il GPS è disattivato
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
                             risultato.innerHTML = "Permesso negato dall'utente. Il browser ha bloccato l'accesso.";
