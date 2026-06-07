@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimostrazione Didattica - Geolocalizzazione</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #risultato {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Verifica Geolocalizzazione del Browser</h2>
+        <p>Clicca sul pulsante per richiedere la posizione tramite le API del browser.</p>
+        <button onclick="trovaPosizione()">Mostra la mia posizione</button>
+        <div id="risultato"></div>
+    </div>
+
+    <script>
+        function trovaPosizione() {
+            const risultato = document.getElementById("risultato");
+
+            // 1. Verifica se il browser supporta l'API
+            if (!navigator.geolocation) {
+                risultato.innerHTML = "La geolocalizzazione non è supportata dal tuo browser.";
+                return;
+            }
+
+            risultato.innerHTML = "Richiesta in corso... Controlla il pop-up del browser.";
+
+            // 2. Chiamata all'API (Questo attiverà il pop-up di consenso)
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Caso di successo: l'utente ha cliccato "Consenti"
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    risultato.innerHTML = `Posizione trovata!<br>Latitudine: ${lat}<br>Longitudine: ${lon}`;
+                },
+                function(error) {
+                    // Caso di errore: l'utente ha cliccato "Blocca" o il GPS è disattivato
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            risultato.innerHTML = "Permesso negato dall'utente. Il browser ha bloccato l'accesso.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            risultato.innerHTML = "Informazioni sulla posizione non disponibili.";
+                            break;
+                        case error.TIMEOUT:
+                            risultato.innerHTML = "Tempo scaduto per ottenere la posizione.";
+                            break;
+                        default:
+                            risultato.innerHTML = "Si è verificato un errore sconosciuto.";
+                    }
+                }
+            );
+        }
+    </script>
+
+</body>
+</html>
